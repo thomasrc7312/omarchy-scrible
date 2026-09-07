@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "trc.scrible",
+  "name": "Scrible",
+  "version": "1.0.0",
+  "author": "trc",
+  "description": "A writing companion: Pomodoro timer, manual word tracker with chart, and Scriby the quill-pen mascot",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "Scrible",
+    "description": "Pomodoro timer, word tracker, and writing companion",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "focusMinutes": 25,
+      "shortBreakMinutes": 5,
+      "longBreakMinutes": 30,
+      "sessionsUntilLongBreak": 4,
+      "autoStartBreaks": false,
+      "goalType": "None",
+      "goalTarget": 500
+    },
+    "schema": [
+      { "key": "focusMinutes", "type": "integer", "label": "Focus length (minutes)", "min": 5, "max": 120, "step": 5, "defaultValue": 25 },
+      { "key": "shortBreakMinutes", "type": "integer", "label": "Short break length (minutes)", "min": 1, "max": 60, "step": 1, "defaultValue": 5 },
+      { "key": "longBreakMinutes", "type": "integer", "label": "Long break length (minutes)", "min": 5, "max": 120, "step": 5, "defaultValue": 30 },
+      { "key": "sessionsUntilLongBreak", "type": "integer", "label": "Focus sessions before a long break", "min": 2, "max": 12, "step": 1, "defaultValue": 4 },
+      { "key": "autoStartBreaks", "type": "boolean", "label": "Start breaks automatically", "defaultValue": false, "description": "When off, breaks wait for you to start them." },
+      { "key": "goalType", "type": "enum", "label": "Daily goal", "options": ["None", "Words", "Sessions"], "defaultValue": "None" },
+      { "key": "goalTarget", "type": "integer", "label": "Daily goal target", "min": 1, "max": 100000, "step": 25, "defaultValue": 500 }
+    ]
+  }
+}
