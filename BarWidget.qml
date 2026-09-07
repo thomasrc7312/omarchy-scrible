@@ -196,7 +196,23 @@ BarWidget {
     root.historyByDate = next
   }
 
-  readonly property string wordCountLabel: todayWordCount + (todayWordCount === 1 ? " word" : " words")
+  // Manual logging only: additive to today's running total.
+  function addWordsToday(amount) {
+    if (!(amount > 0)) return
+    var next = HistoryStore.withWordsAdded(root.historyByDate, root.todayKey, amount)
+    historyFile.setText(HistoryStore.serialize(next))
+    root.historyByDate = next
+  }
+
+  // Editing any day (past or today) from the chart or the date picker
+  // replaces its total outright rather than adding to it.
+  function setWordsForDate(dateKey, amount) {
+    var next = HistoryStore.withWordsSet(root.historyByDate, dateKey, amount)
+    historyFile.setText(HistoryStore.serialize(next))
+    root.historyByDate = next
+  }
+
+  readonly property string wordCountLabel: Model.wordsLabel(todayWordCount)
   readonly property string displayText: timerRunning
     ? timerRemainingLabel
     : (vertical ? String(todayWordCount) : wordCountLabel)

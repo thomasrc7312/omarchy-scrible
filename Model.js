@@ -69,3 +69,43 @@ function serializeTimerState(state) {
     suppressingNotifications: state.suppressingNotifications
   }, null, 2) + "\n"
 }
+
+function formatCount(n) {
+  var s = String(Math.max(0, Math.round(n)))
+  var out = ""
+  while (s.length > 3) {
+    out = "," + s.slice(-3) + out
+    s = s.slice(0, -3)
+  }
+  return s + out
+}
+
+function wordsLabel(n) {
+  return formatCount(n) + (n === 1 ? " word" : " words")
+}
+
+// Monday-start month grid for the date picker: six weeks of seven
+// {key, day, inMonth, isToday, isFuture} cells, using the same YYYY-MM-DD
+// key as HistoryStore so a cell tap can address a day record directly.
+function monthGrid(year, month, todayKey) {
+  var firstOfMonth = new Date(year, month, 1)
+  var mondayOffset = (firstOfMonth.getDay() + 6) % 7
+  var cursor = new Date(year, month, 1 - mondayOffset)
+  var weeks = []
+  for (var w = 0; w < 6; w++) {
+    var days = []
+    for (var d = 0; d < 7; d++) {
+      var key = cursor.getFullYear() + "-" + pad2(cursor.getMonth() + 1) + "-" + pad2(cursor.getDate())
+      days.push({
+        key: key,
+        day: cursor.getDate(),
+        inMonth: cursor.getMonth() === month,
+        isToday: key === todayKey,
+        isFuture: key > todayKey
+      })
+      cursor.setDate(cursor.getDate() + 1)
+    }
+    weeks.push(days)
+  }
+  return weeks
+}
