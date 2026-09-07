@@ -1,8 +1,11 @@
 import QtQuick
+import QtQuick.Effects
+import Quickshell.Io
 import qs.Commons
 import qs.Ui
 import "Model.js" as Model
 import "HistoryStore.js" as HistoryStore
+import "Quotes.js" as Quotes
 
 // The panel that drops from the Scrible bar pill: timer controls at top,
 // word entry + stats + chart in the middle, Scriby at the bottom.
@@ -114,8 +117,70 @@ Panel {
   property int wordsToAdd: 0
 
   function submitWordsToAdd() {
-    if (root.wordsToAdd > 0 && root.hostWidget) root.hostWidget.addWordsToday(root.wordsToAdd)
+    if (root.wordsToAdd > 0 && root.hostWidget) {
+      // Shown before the mutation: if this log happens to cross the goal,
+      // the goal-reached reaction fires synchronously off the history
+      // change below and should be what's left on screen, not this one.
+      root.showReaction(Quotes.randomLine(root.quotesData.wordsLogged), false)
+      root.hostWidget.addWordsToday(root.wordsToAdd)
+    }
     root.wordsToAdd = 0
+  }
+
+  // ---- Goal ---------------------------------------------------------
+  readonly property string goalType: String(root.setting("goalType", "None")).toLowerCase()
+  readonly property int goalTarget: root.setting("goalTarget", 500)
+  readonly property bool goalActive: goalType === "words" || goalType === "sessions"
+  readonly property int goalCurrent: !root.hostWidget ? 0
+    : goalType === "sessions" ? root.hostWidget.todayFocusSessions
+    : goalType === "words" ? root.hostWidget.todayWordCount : 0
+  readonly property real goalFraction: goalActive && goalTarget > 0 ? Math.min(1, goalCurrent / goalTarget) : 0
+  readonly property bool goalMet: goalActive && goalTarget > 0 && goalCurrent >= goalTarget
+
+  onGoalMetChanged: {
+    if (goalMet) root.showReaction(Quotes.randomLine(root.quotesData.goalReached), true)
+  }
+
+  // ---- Scriby ---------------------------------------------------------
+  property var quotesData: Quotes.fallback()
+  property var scribyMessage: ({ text: "", author: "" })
+  property bool scribyIsGoalReaction: false
+
+  function showReaction(item, isGoalReaction) {
+    root.scribyMessage = item
+    root.scribyIsGoalReaction = isGoalReaction
+  }
+
+  function rotateScriby() {
+    root.showReaction(Quotes.randomPoolEntry(root.quotesData.pool), false)
+  }
+
+  function handleHostEvent(kind) {
+    if (kind === "focusStart") root.showReaction(Quotes.randomLine(root.quotesData.focusStart), false)
+    else if (kind === "breakStart") root.showReaction(Quotes.randomLine(root.quotesData.breakStart), false)
+    else if (kind === "focusComplete") root.rotateScriby()
+  }
+
+  onOpenedChanged: if (root.opened) root.rotateScriby()
+
+  Connections {
+    target: root.hostWidget
+    function onLastEventSeqChanged() { root.handleHostEvent(root.hostWidget.lastEventKind) }
+  }
+
+  FileView {
+    id: quotesFile
+    path: Qt.resolvedUrl("quotes.json")
+    watchChanges: false
+    printErrors: false
+    onLoaded: {
+      root.quotesData = Quotes.parse(text())
+      root.rotateScriby()
+    }
+    onLoadFailed: {
+      root.quotesData = Quotes.fallback()
+      root.rotateScriby()
+    }
   }
 
   KeyboardPanel {
@@ -273,6 +338,36 @@ Panel {
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.display
             font.bold: true
+          }
+
+          Column {
+            width: parent.width
+            spacing: Style.space(4)
+            visible: root.goalActive
+
+            Text {
+              text: Model.formatCount(root.goalCurrent) + " of " + Model.formatCount(root.goalTarget)
+                + (root.goalType === "sessions" ? (root.goalTarget === 1 ? " session" : " sessions") : " words") + " today"
+              color: root.contentForeground
+              font.family: root.contentFontFamily
+              font.pixelSize: Style.font.bodySmall
+            }
+
+            Rectangle {
+              width: parent.width
+              height: Style.space(6)
+              radius: height / 2
+              color: Qt.rgba(root.contentForeground.r, root.contentForeground.g, root.contentForeground.b, 0.12)
+
+              Rectangle {
+                width: Math.round(parent.width * root.goalFraction)
+                height: parent.height
+                radius: parent.radius
+                color: Color.accent
+
+                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+              }
+            }
           }
 
           // Reserved strip for the one label the chart shows: the tallest
@@ -547,6 +642,92 @@ Panel {
             text: "SCRIBY"
             foreground: root.contentForeground
             fontFamily: root.contentFontFamily
+          }
+
+          Item {
+            width: parent.width
+            height: Math.max(scribyFigure.height, bubble.implicitHeight)
+
+            Item {
+              id: scribyFigure
+              anchors.left: parent.left
+              anchors.bottom: parent.bottom
+              width: Style.space(64)
+              height: Style.space(64)
+
+              Item {
+                id: scribyBob
+                width: parent.width
+                height: parent.height
+
+                SequentialAnimation on y {
+                  running: root.opened
+                  loops: Animation.Infinite
+                  NumberAnimation { from: 0; to: -4; duration: 1200; easing.type: Easing.InOutSine }
+                  NumberAnimation { from: -4; to: 0; duration: 1200; easing.type: Easing.InOutSine }
+                }
+
+                Image {
+                  id: scribyMask
+                  anchors.fill: parent
+                  source: Qt.resolvedUrl("scriby.svg")
+                  visible: false
+                  layer.enabled: true
+                  sourceSize.width: width
+                  sourceSize.height: height
+                }
+
+                MultiEffect {
+                  anchors.fill: scribyMask
+                  source: scribyMask
+                  colorization: 1.0
+                  colorizationColor: Color.accent
+                }
+              }
+            }
+
+            Rectangle {
+              id: bubble
+              anchors.left: scribyFigure.right
+              anchors.leftMargin: Style.space(12)
+              anchors.right: parent.right
+              anchors.verticalCenter: scribyFigure.verticalCenter
+              implicitHeight: bubbleColumn.implicitHeight + Style.space(16)
+              radius: Style.cornerRadius
+              color: root.scribyIsGoalReaction
+                ? Qt.rgba(Color.accent.r, Color.accent.g, Color.accent.b, 0.16)
+                : Qt.rgba(root.contentForeground.r, root.contentForeground.g, root.contentForeground.b, 0.06)
+
+              Behavior on color { ColorAnimation { duration: 200 } }
+
+              Column {
+                id: bubbleColumn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: Style.space(10)
+                spacing: Style.space(4)
+
+                Text {
+                  width: parent.width
+                  text: root.scribyMessage.text
+                  color: root.contentForeground
+                  font.family: root.contentFontFamily
+                  font.pixelSize: Style.font.bodySmall
+                  wrapMode: Text.Wrap
+                }
+
+                Text {
+                  visible: root.scribyMessage.author !== ""
+                  width: parent.width
+                  text: "— " + root.scribyMessage.author
+                  color: Qt.darker(root.contentForeground, 1.4)
+                  font.family: root.contentFontFamily
+                  font.pixelSize: Style.font.caption
+                  horizontalAlignment: Text.AlignRight
+                }
+              }
+            }
           }
         }
       }

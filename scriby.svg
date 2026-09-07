@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Scriby: an original flat quill-pen silhouette. Eyes are literal holes
+       (fill-rule="evenodd") so the panel's theme-colored background shows
+       through them once the shape itself is recolored by MultiEffect. -->
+  <path fill-rule="evenodd" fill="#ffffff" d="
+    M22 82
+    Q60.8 56.9 78 14
+    Q39.2 39.1 22 82
+    Z
+    M52.9 47.1 A3 3 0 1 0 58.9 47.1 A3 3 0 1 0 52.9 47.1 Z
+    M46.7 42.1 A3 3 0 1 0 52.7 42.1 A3 3 0 1 0 46.7 42.1 Z
+  "/>
+</svg>

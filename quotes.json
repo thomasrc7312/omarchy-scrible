@@ -1,0 +1,72 @@
+{
+  "pool": [
+    { "text": "Whatever you wrote today counts.", "author": "" },
+    { "text": "A page is a page.", "author": "" },
+    { "text": "No rush. The story isn't going anywhere without you.", "author": "" },
+    { "text": "Some days are for typing. Some days are for thinking. Both count.", "author": "" },
+    { "text": "You showed up. That's the whole job, most days.", "author": "" },
+    { "text": "Nobody's counting but you — and you don't have to either.", "author": "" },
+    { "text": "Small words today are still words.", "author": "" },
+    { "text": "The blank page blinked first.", "author": "" },
+    { "text": "Writing badly today beats not writing at all.", "author": "" },
+    { "text": "Ink's flowing whenever you're ready.", "author": "" },
+    { "text": "One sentence is a start. Start there.", "author": "" },
+    { "text": "Today's draft doesn't have to be good. It has to exist.", "author": "" },
+    { "text": "The story missed you.", "author": "" },
+    { "text": "Progress, not perfection — and even a little progress is fine.", "author": "" },
+    { "text": "Nothing dramatic. Just words, one after another.", "author": "" },
+    { "text": "There is nothing to writing. All you do is sit down at a typewriter and bleed.", "author": "Ernest Hemingway" },
+    { "text": "Don't tell me the moon is shining; show me the glint of light on broken glass.", "author": "Anton Chekhov" },
+    { "text": "Writing is like driving at night in the fog. You can only see as far as your headlights, but you can make the whole trip that way.", "author": "E. L. Doctorow" },
+    { "text": "If there's a book that you want to read, but it hasn't been written yet, then you must write it.", "author": "Toni Morrison" },
+    { "text": "There is no greater agony than bearing an untold story inside you.", "author": "Maya Angelou" },
+    { "text": "Get it down. Take chances. It may be bad, but it's the only way you can do anything really good.", "author": "William Faulkner" },
+    { "text": "You must stay drunk on writing so reality cannot destroy you.", "author": "Ray Bradbury" },
+    { "text": "You can't wait for inspiration. You have to go after it with a club.", "author": "Jack London" },
+    { "text": "Arrange whatever pieces come your way.", "author": "Virginia Woolf" },
+    { "text": "You don't write because you want to say something, you write because you have something to say.", "author": "F. Scott Fitzgerald" },
+    { "text": "A book must be the axe for the frozen sea within us.", "author": "Franz Kafka" },
+    { "text": "Be regular and orderly in your life, so that you may be violent and original in your work.", "author": "Gustave Flaubert" },
+    { "text": "There are three rules for writing a novel. Unfortunately, no one knows what they are.", "author": "W. Somerset Maugham" },
+    { "text": "I hate writing, I love having written.", "author": "Dorothy Parker" },
+    { "text": "The writer must believe that what he is doing is the most important thing in the world.", "author": "John Steinbeck" },
+    { "text": "The difference between the almost right word and the right word is really a large matter.", "author": "Mark Twain" },
+    { "text": "Write to please just one person.", "author": "Kurt Vonnegut" },
+    { "text": "The story is not in the plot but in the telling.", "author": "Ursula K. Le Guin" },
+    { "text": "First forget inspiration. Habit is more dependable.", "author": "Octavia E. Butler" },
+    { "text": "How we spend our days is, of course, how we spend our lives.", "author": "Annie Dillard" },
+    { "text": "You sit down at the keyboard and you put one word after another until it's done.", "author": "Neil Gaiman" },
+    { "text": "Amateurs sit and wait for inspiration; the rest of us just get up and go to work.", "author": "Stephen King" },
+    { "text": "Give yourself the gift of a wild mind and a disciplined life.", "author": "Natalie Goldberg" },
+    { "text": "Rewriting is the essence of writing well.", "author": "William Zinsser" },
+    { "text": "The waste basket is a writer's best friend.", "author": "Isaac Bashevis Singer" }
+  ],
+  "focusStart": [
+    "Focus time. I'll keep watch.",
+    "Off you go. I'll be here.",
+    "Quiet now — the page is listening.",
+    "Time to write. No one's judging the first draft.",
+    "Here we go. Just words, one after another."
+  ],
+  "breakStart": [
+    "Stretch your legs a bit.",
+    "Look at something far away for a second.",
+    "Water. Maybe a window.",
+    "Rest counts too.",
+    "Back in a bit — the page will keep."
+  ],
+  "wordsLogged": [
+    "Logged. Nice.",
+    "Added to the pile.",
+    "That's more than zero.",
+    "Noted, and appreciated.",
+    "Every bit counts."
+  ],
+  "goalReached": [
+    "Goal met. No pressure tomorrow — today already counts.",
+    "There it is. Go easy on yourself now.",
+    "Target reached. Kettle's on.",
+    "That's the goal, done. The rest of today is yours.",
+    "Nailed it. Tomorrow's a fresh page, not a debt."
+  ]
+}

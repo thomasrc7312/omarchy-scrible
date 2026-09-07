@@ -35,6 +35,16 @@ BarWidget {
   property double nowMs: Date.now()
   property bool timerStateLoaded: false
 
+  // Scriby's cue: Panel.qml watches lastEventSeq (not lastEventKind alone,
+  // since the same kind can legitimately repeat back to back) to know when
+  // to react. Not persisted -- purely a live nudge, nothing to resume.
+  property string lastEventKind: "" // "focusStart" | "focusComplete" | "breakStart"
+  property int lastEventSeq: 0
+  function emitEvent(kind) {
+    root.lastEventKind = kind
+    root.lastEventSeq += 1
+  }
+
   readonly property bool timerRunning: phase !== "idle"
   readonly property int remainingSeconds: timerRunning ? Math.max(0, Math.ceil((endEpochMs - nowMs) / 1000)) : 0
   readonly property string timerRemainingLabel: Model.formatMMSS(remainingSeconds)
@@ -81,6 +91,7 @@ BarWidget {
     root.pendingBreakType = ""
     root.beginFocusSuppression()
     root.persistTimerState()
+    root.emitEvent("focusStart")
   }
 
   function startBreak(kind) {
@@ -89,6 +100,7 @@ BarWidget {
     root.endEpochMs = root.nowMs + (kind === "long" ? root.longBreakMinutes : root.shortBreakMinutes) * 60000
     root.pendingBreakType = ""
     root.persistTimerState()
+    root.emitEvent("breakStart")
   }
 
   // Also used for "skip break": both just abandon the running interval
@@ -107,6 +119,13 @@ BarWidget {
 
   function completeFocus() {
     root.endFocusSuppression()
+    // Emitted before the history write below: Panel's focus-complete
+    // reaction (a pool rotation) and a goal-just-reached reaction (fired
+    // synchronously off the history change, if this session happens to
+    // cross the goal) can coincide, and the goal reaction -- being the
+    // more specific, visibly-distinct one -- should win as the message
+    // left on screen, not get clobbered by the rotation a moment later.
+    root.emitEvent("focusComplete")
     root.recordFocusSessionCompleted()
 
     var nextType = root.decideNextBreakType()
