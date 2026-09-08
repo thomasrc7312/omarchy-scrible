@@ -10,10 +10,8 @@ The bar pill shows a countdown while the timer is running, and today's word coun
 
 ## Install
 
-If you push this repo to your own git remote:
-
 ```
-omarchy plugin add <your-repo-url> --enable --yes
+omarchy plugin add https://github.com/thomasrc7312/omarchy-scrible.git --enable --yes
 ```
 
 Or install it by hand — this is exactly what already sitting in `~/.config/omarchy/plugins/trc.scrible/` amounts to:
